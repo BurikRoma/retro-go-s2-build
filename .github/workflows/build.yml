@@ -1,0 +1,29 @@
+name: Build Retro-Go for ESP32-S2 Mini
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: espressif/idf:v4.4.6
+
+    steps:
+      - name: Clone Retro-Go
+        run: git clone -b master https://github.com/ducalex/retro-go.git
+
+      - name: Clone guide repo (ready-made target files)
+        run: git clone https://github.com/LogicGateLabsMVP/8BitHandheldInstructions.git
+
+      - name: Copy ready-made target files over retro-go
+        run: cp -r 8BitHandheldInstructions/retro-go/* retro-go/
+
+      - name: Build firmware image (launcher + retro-core)
+        working-directory: retro-go
+        run: python rg_tool.py --target=esp32-s2-mini build-img launcher retro-core
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: retro-go-esp32-s2-mini-firmware
+          path: retro-go/dist/*.img
