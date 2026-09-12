@@ -20,7 +20,9 @@ jobs:
 
       - name: Build firmware image (launcher + retro-core)
         working-directory: retro-go
-        run: python rg_tool.py --target=esp32-s2-mini build-img launcher retro-core
+        run: |
+          . $IDF_PATH/export.sh
+          python rg_tool.py --target=esp32-s2-mini build-img launcher retro-core
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
